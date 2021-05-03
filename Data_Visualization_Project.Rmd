@@ -1,0 +1,116 @@
+---
+title: "R Data Visualization Project"
+output: html_notebook
+---
+
+The aim of this project is to get familiar with ggplot and recreate this plot from The Economist:
+
+![image](./Economist1.png)
+
+
+
+
+
+## Importing Library
+```{r}
+library(ggplot2)
+```
+
+## Reading data set
+```{r}
+df <- readr::read_csv("./Economist_Assignment_Data.csv")
+# Dropping First Column
+df <- df[,-1]
+```
+```{r, echo=TRUE}
+head(df)
+```
+## Data first impressions
+```{r, echo=TRUE}
+summary(df)
+```
+## Scatter Plot
+```{r, echo=TRUE}
+pl <- ggplot(df, aes(x = CPI, y = HDI)) + geom_point(aes(color = Region))
+```
+```{r}
+print(pl)
+```
+
+```{r, eval=FALSE, include=TRUE}
+pl <- ggplot(df, aes(x = CPI, y = HDI)) + geom_point(aes(color = Region), shape = 1, size = 4)
+```
+```{r}
+print(pl)
+```
+```{r, eval=FALSE, include=TRUE}
+pl2 <- pl + geom_smooth(aes(group = 1))
+```
+```{r message=FALSE, warning=FALSE}
+print(pl2)
+```
+```{r, eval=FALSE, include=TRUE}
+pl3 <- pl + geom_smooth(aes(group = 1), method = lm, formula = y ~ log(x), se = FALSE, color = "red")
+```
+```{r message=FALSE, warning=FALSE}
+print(pl3)
+```
+```{r, eval=FALSE, include=TRUE}
+pl4 <- pl3 + geom_text(aes(label = Country, color = Region)) 
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl4)
+```
+Because there's a lot of Country names, we will choose a subset to appear:
+
+```{r, eval=FALSE, include=TRUE}
+points_to_label <- c("Russia", "Venezuela", "Iraq", "Myanmar", "Sudan",
+                   "Afghanistan", "Congo", "Greece", "Argentina", "Brazil",
+                   "India", "Italy", "China", "South Africa", "Spane",
+                   "Botswana", "Cape Verde", "Bhutan", "Rwanda", "France",
+                   "United States", "Germany", "Britain", "Barbados", "Norway", "Japan",
+                   "New Zealand", "Singapore")
+pl4 <- pl3 + geom_text(
+  aes(label = Country), 
+  color = "gray20",
+  data = subset(df, Country %in% points_to_label), check_overlap = TRUE)
+  ) 
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl4)
+```
+```{r, eval=FALSE, include=TRUE}
+pl5 <- pl4 + theme_bw()
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl5)
+```
+Changing visualization of x values to continuous and adding label:
+```{r, eval=FALSE, include=TRUE}
+pl6 <- pl5 + scale_x_continuous(
+  name = "Corruption Perceptions Index, 2011 (10=least corrupt)",
+  breaks = c(1:10),
+  limits = c(1,10)
+  )
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl6)
+```
+Changing visualization of y values to continuous and adding label:
+```{r, eval=FALSE, include=TRUE}
+pl7 <- pl6 + scale_y_continuous(
+  name = "Human Development Index, 2011 (1=best)",
+  limits = c(0.2,1)
+  )
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl7)
+```
+```{r, eval=FALSE, include=TRUE}
+pl8 <- pl7 + ggtitle("Corruption and human development")
+```
+```{r, message=FALSE, warning=FALSE}
+print(pl8)
+```
+
+
